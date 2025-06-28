@@ -1,0 +1,190 @@
+CREATE SCHEMA CodingPlatform;
+SET SEARCH_PATH TO CodingPlatform;
+
+CREATE TABLE users(
+userid int PRIMARY KEY,
+pwd varchar(20) NOT NULL,
+name varchar(18) NOT NULL,
+email varchar(30),
+phone_no varchar(16),
+rating int,
+reg_date timestamp NOT NULL,
+country varchar(20) NOT NULL
+);
+
+CREATE TABLE friend_of(
+userid int,
+friendid int,
+PRIMARY KEY (userid, friendid),
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (friendid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE problems(
+probid int PRIMARY KEY,
+prob_name varchar(50) NOT NULL,
+statement text NOT NULL,
+max_memory_mb int NOT NULL,
+max_runtime_s int NOT NULL,
+difficulty int,
+creator_id int,
+contestid int,
+FOREIGN KEY (creator_id) REFERENCES users
+	ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE tags(
+probid int,
+tagname varchar(40),
+PRIMARY KEY (probid, tagname),
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE favorites(
+userid int,
+probid int,
+PRIMARY KEY (userid, probid),
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE test_cases(
+probid int,
+testcaseno int,
+input text,
+PRIMARY KEY (probid, testcaseno),
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE output(
+probid int,
+testcaseno int,
+output text,
+PRIMARY KEY (probid, testcaseno, output),
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (probid, testcaseno) REFERENCES test_cases
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE discussions(
+discid int PRIMARY KEY,
+topic varchar(50) NOT NULL,
+started_by int,
+FOREIGN KEY (started_by) REFERENCES users
+	ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE about(
+discid int,
+probid int,
+PRIMARY KEY (discid, probid),
+FOREIGN KEY (discid) REFERENCES discussions
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE posts(
+postid int PRIMARY KEY,
+comment text NOT NULL,
+posted_at timestamp NOT NULL,
+userid int NOT NULL,
+discid int NOT NULL,
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (discid) REFERENCES discussions
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE contests(
+contestid int PRIMARY KEY,
+contest_name text NOT NULL,
+contest_date_time timestamp NOT NULL,
+duration_hrs int NOT NULL,
+contest_div int
+);
+
+CREATE TABLE participates_in(
+userid int,
+contestid int,
+rank int NOT NULL,
+score int NOT NULL,
+time_spent_hrs int NOT NULL,
+PRIMARY KEY (userid, contestid),
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (contestid) REFERENCES contests
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE written_by(
+userid int,
+contestid int,
+PRIMARY KEY (userid, contestid),
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (contestid) REFERENCES contests
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE submissions(
+subid int PRIMARY KEY,
+code text NOT NULL,
+status varchar(8) NOT NULL CHECK(status in ('Accepted', 'Rejected')),
+memory_mb int NOT NULL,
+runtime_s int NOT NULL,
+language varchar(20) NOT NULL,
+submission_time timestamp NOT NULL,
+userid int NOT NULL,
+probid int NOT NULL,
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE solution(
+solutionid int PRIMARY KEY,
+code text NOT NULL,
+sol_memory_mb int NOT NULL,
+sol_runtime_s int NOT NULL,
+language varchar(20) NOT NULL,
+userid int NOT NULL,
+probid int NOT NULL,
+FOREIGN KEY (userid) REFERENCES users
+	ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY (probid) REFERENCES problems
+	ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+ALTER table problems add FOREIGN KEY (contestid) REFERENCES contests
+	ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+--modifications
+
+ALTER TABLE submissions
+	DROP CONSTRAINT submissions_status_check;
+
+ALTER TABLE submissions  
+	ALTER COLUMN status TYPE varchar(20);
+ALTER TABLE submissions
+	ADD CONSTRAINT submissions_status_check CHECK(status IN ('Accepted', 'Wrong_Answer', 'TLE', 'MLE', 'OutputLE', 'Runtime_Error', 'Compile_Error'));
+
+ALTER TABLE submissions
+	ADD COLUMN wrong_testcaseno int,
+	ADD FOREIGN KEY (probid, wrong_testcaseno) REFERENCES test_cases(probid, testcaseno)
+  		ON DELETE RESTRICT ON UPDATE CASCADE,
+	ADD CONSTRAINT wrong_testcaseno_check CHECK ((status = 'Wrong Answer' AND wrong_testcaseno IS NOT NULL) OR (status <> 'Wrong Answer' AND wrong_testcaseno IS NULL));
+
+
+ALTER TABLE output
+DROP CONSTRAINT output_probid_fkey;
+
