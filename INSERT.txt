@@ -1,0 +1,487 @@
+SET SEARCH_PATH TO CodingPlatform;
+
+-- 1. Users
+INSERT INTO users (userid, pwd, name, email, phone_no, rating, reg_date, country)
+VALUES 
+  (1, 'pass1', 'Alice', 'alice@example.com', '1234567890', 1500, date '2024-12-08', 'USA'),
+  (2, 'pass2', 'Bob', 'bob@example.com', '2345678901', 1300, date '2024-11-15', 'Canada'),
+  (3, 'pass3', 'Charlie', 'charlie@example.com', '3456789012', 1200, date '2025-01-05', 'UK'),
+  (4, 'pass4', 'Diana', 'diana@example.com', '4567890123', 1600, date '2023-07-12', 'USA'),
+  (5, 'pass5', 'Evan', 'evan@example.com', '5678901234', 1100, date '2024-03-20', 'Australia'),
+  (6, 'pass6', 'Fiona', 'fiona@example.com', '6789012345', 1400, date '2024-10-31', 'Germany'),
+  (7, 'pass7', 'Gautam', 'gautam@sample.in', '9012345678', 1550, date '2024-08-09', 'India'),
+  (8, 'pass8', 'Harsha', 'harsha@sample.in', '9123456780', 1250, date '2024-09-30', 'India'),
+  (9, 'pass9', 'Isha', 'isha@sample.in', '9234567801', 1350, date '2024-12-25', 'India'),
+  (10, 'pass10', 'Jai', 'jai@sample.in', '9345678012', 1500, date '2025-02-14', 'India'),
+  (11, 'pass11', 'Kiran', 'kiran@sample.com', '9456780123', 1450, date '2023-11-03', 'USA'),
+  (12, 'pass12', 'Lalit', 'lalit@sample.in', '9567801234', 1600, date '2025-03-01', 'India');
+
+-- 2. friend_of
+
+INSERT INTO friend_of (userid, friendid)
+VALUES
+  (1, 2),
+  (1, 3),
+  (2, 4),
+  (3, 5),
+  (7, 8),
+  (7, 9),
+  (8, 10),
+  (9, 11),
+  (10, 12),
+  (2, 7),
+  (4, 11);
+
+
+-- 3. Contests
+
+INSERT INTO contests (contestid, contest_name, contest_date_time, duration_hrs, contest_div)
+VALUES
+  (1, 'Spring Challenge', timestamp '2025-04-03 18:30:52', 3, 1),
+  (2, 'Autumn Cup', timestamp '2025-05-10 14:00:00', 2, 2),
+  (3, 'Winter Bash', timestamp '2025-12-15 10:00:00', 4, 3),
+  (4, 'Summer Showdown', timestamp '2025-07-20 16:00:00', 3, 4),
+  (5, 'New Year Sprint', timestamp '2026-01-01 00:00:00', 2, 1),
+  (6, 'Tech Fiesta', timestamp '2025-06-05 12:00:00', 3, 2);
+
+-- 4. Problems (12 problems total)
+
+-- Problems 101–105
+INSERT INTO problems (probid, prob_name, statement, max_memory_mb, max_runtime_s, difficulty, creator_id, contestid)
+VALUES
+  (101, 'Sum of Two Numbers', 
+   'Given two integers, compute their sum. The solution should read two numbers from input and print the result. Example: Input: 2 3, Output: 5.', 
+   256, 2, 1500, 1, 1),
+  
+  (102, 'Reverse a String', 
+   'Write a function that takes a string as input and returns the string reversed. Consider edge cases like empty strings. Example: Input: "hello", Output: "olleh".', 
+   128, 1, 1300, 7, 2),
+  
+  (103, 'Find Graph Path', 
+   'Determine if there is a path between two nodes in an undirected graph. The input includes the number of nodes, a list of edges, and two target nodes. Output "Yes" (in various letter cases) if a path exists; otherwise, output "No".', 
+   512, 3, 1400, 9, 2),
+  
+  (104, 'Sort an Array', 
+   'Given an unsorted array of integers, sort the array in ascending order using an efficient algorithm. Duplicate values may appear and must be ordered correctly. Example: Input: [5,3,8,1], Output: [1,3,5,8].', 
+   256, 2, 1600, 11, 1),
+  
+  (105, 'Matrix Multiplication', 
+   'Multiply two matrices provided as input. Validate that the dimensions are compatible and output the resulting matrix. For example, for matrices A (2x3) and B (3x2), the output should be a (2x2) matrix.', 
+   1024, 5, 1500, 3, 2),
+  
+-- Problems 106–109: New problems for contests 3–6
+  (106, 'Binary Search', 
+   'Given a sorted array of integers and a key, implement binary search to find the key. If found, return its index; otherwise, return -1. Example: Input: [1,3,5,7,9] with key=5, Output: 2.', 
+   256, 2, 1250, 4, 3),
+  
+  (107, 'Factorial Calculation', 
+   'Compute the factorial of a non-negative integer n. Return n!. Example: Input: 5, Output: 120.', 
+   128, 1, 1600, 2, 4),
+  
+  (108, 'Prime Check', 
+   'Determine if a given integer is prime. Output "Yes" (with various case combinations) if prime, otherwise "No". Example: Input: 7, Output: Yes.', 
+   128, 1, 1350, 7, 5),
+  
+  (109, 'Merge Sort', 
+   'Implement merge sort to sort an array of integers. The algorithm should recursively divide and then merge. Example: Input: [8,3,5,2], Output: [2,3,5,8].', 
+   256, 2, 1500, 10, 6),
+  
+-- Problems 110–111: New problems not part of any contest
+  (110, 'Longest Common Subsequence', 
+   'Given two sequences, determine the length of their longest common subsequence (LCS). The solution should work even when there is no common subsequence. Example: Input: "ABCBDAB" and "BDCAB", Output: 4.', 
+   256, 2, 1400, 8, NULL),
+  
+  (111, 'Palindrome Check', 
+   'Check whether a given string is a palindrome. The function should be case-insensitive and handle empty strings. Example: Input: "Racecar", Output: "Yes".', 
+   128, 1, 1300, 10, NULL),
+  
+-- Problem 112: Extra problem for contest 6
+  (112, 'Dijkstra Shortest Path', 
+   'Implement Dijkstra’s algorithm to find the shortest path in a weighted graph from a source vertex to all other vertices. The input includes the number of vertices, edges with weights, and a source vertex. Output the shortest distances as a list.', 
+   512, 3, 1500, 12, 6);
+
+-- 5. Tags
+
+INSERT INTO tags (probid, tagname)
+VALUES
+  (101, 'math'),
+  (101, 'easy'),
+  (102, 'string'),
+  (102, 'algorithm'),
+  (103, 'graph'),
+  (103, 'medium'),
+  (104, 'array'),
+  (104, 'sorting'),
+  (105, 'matrix'),
+  (105, 'hard'),
+  (106, 'search'),
+  (106, 'binary'),
+  (107, 'math'),
+  (107, 'recursion'),
+  (108, 'prime'),
+  (108, 'number'),
+  (109, 'sorting'),
+  (109, 'divide and conquer'),
+  (110, 'dp'),
+  (110, 'lcs'),
+  (111, 'string'),
+  (111, 'palindrome'),
+  (112, 'graph'),
+  (112, 'shortest path');
+
+-- 6. Favorites (a user may favorite more than one problem)
+
+INSERT INTO favorites (userid, probid)
+VALUES
+  (1, 102),
+  (1, 101),
+  (3, 101),
+  (3, 104),
+  (4, 103),
+  (5, 104),
+  (7, 105),
+  (7, 102),
+  (8, 101),
+  (9, 104),
+  (10, 102),
+  (10, 103),
+  (11, 105),
+  (12, 101),
+  (2, 106),
+  (4, 107);
+
+-- 7. Test Cases
+
+-- Problem 101
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (101, 1, '2 3'),
+  (101, 2, '10 20');
+
+-- Problem 102
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (102, 1, 'hello'),
+  (102, 2, 'world');
+
+-- Problem 103
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (103, 1, '5 7 1 8; 1 2; start=1, end=4'),
+  (103, 2, '3 4 2 6; 2 3; start=2, end=3');
+
+-- Problem 104
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (104, 1, '5 3 8 1'),
+  (104, 2, '12 7 3 9');
+
+-- Problem 105
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (105, 1, 'Matrix A: [[1,2],[3,4]]; Matrix B: [[5,6],[7,8]]'),
+  (105, 2, 'Matrix A: [[2,0],[1,3]]; Matrix B: [[1,4],[2,5]]');
+
+-- Problem 106 (Binary Search)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (106, 1, '1 3 5 7 9; 5'),
+  (106, 2, '1 3 5 7 9; 10');
+
+-- Problem 107 (Factorial Calculation)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (107, 1, '5'),
+  (107, 2, '0');
+
+-- Problem 108 (Prime Check)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (108, 1, '7'),
+  (108, 2, '10');
+
+-- Problem 109 (Merge Sort)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (109, 1, '8 3 5 2'),
+  (109, 2, '4 1 6 0');
+
+-- Problem 110 (Longest Common Subsequence)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (110, 1, '"ABCBDAB" "BDCAB"'),
+  (110, 2, '"" "XYZ"');
+
+-- Problem 111 (Palindrome Check)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (111, 1, '"Racecar"'),
+  (111, 2, '"hello"');
+
+-- Problem 112 (Dijkstra Shortest Path)
+INSERT INTO test_cases (probid, testcaseno, input)
+VALUES
+  (112, 1, '5; 0 1 10, 0 2 5, 1 2 2, 1 3 1, 2 1 3, 2 3 9, 2 4 2, 3 4 4; source=0');
+
+
+-- 8. Output (considering multiple variation cases)
+
+-- Problem 101
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (101, 1, '5'),
+  (101, 1, '05'),
+  (101, 2, '30'),
+  (101, 2, '030');
+
+-- Problem 102
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (102, 1, 'olleh'),
+  (102, 1, 'OLLEH'),
+  (102, 2, 'dlrow'),
+  (102, 2, 'DLROW');
+
+-- Problem 103
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (103, 1, 'Yes'),
+  (103, 1, 'YeS'),
+  (103, 1, 'YEs'),
+  (103, 1, 'YES'),
+  (103, 1, 'yes'),
+  (103, 1, 'yEs'),
+  (103, 1, 'yES'),
+  (103, 1, 'yeS'),
+  (103, 2, 'No'),
+  (103, 2, 'nO'),
+  (103, 2, 'no'),
+  (103, 2, 'NO');
+
+-- Problem 104
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (104, 1, '1 3 5 8'),
+  (104, 2, '3 7 9 12');
+
+-- Problem 105
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (105, 1, '[[19, 22],[43, 50]]'),
+  (105, 1, '[ [19,22], [43,50]]'),
+  (105, 2, '[[2,17],[7,29]]'),
+  (105, 2, '[ [2, 17], [7, 29]]');
+
+-- Problem 106
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (106, 1, '2'),
+  (106, 2, '-1');
+
+-- Problem 107
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (107, 1, '120'),
+  (107, 2, '1');
+
+-- Problem 108
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (108, 1, 'Yes'),
+  (108, 1, 'YeS'),
+  (108, 1, 'YEs'),
+  (108, 1, 'YES'),
+  (108, 1, 'yes'),
+  (108, 1, 'yEs'),
+  (108, 1, 'yES'),
+  (108, 1, 'yeS'),
+  (108, 2, 'No'),
+  (108, 2, 'nO'),
+  (108, 2, 'no'),
+  (108, 2, 'NO');
+
+
+-- Problem 109
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (109, 1, '2 3 5 8'),
+  (109, 2, '0 1 4 6');
+
+-- Problem 110
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (110, 1, '4'),
+  (110, 1, '04'),
+  (110, 2, '0');
+
+-- Problem 111
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (111, 1, 'Yes'),
+  (111, 1, 'YeS'),
+  (111, 1, 'YEs'),
+  (111, 1, 'YES'),
+  (111, 1, 'yes'),
+  (111, 1, 'yEs'),
+  (111, 1, 'yES'),
+  (111, 1, 'yeS'),
+  (111, 2, 'No'),
+  (111, 2, 'nO'),
+  (111, 2, 'no'),
+  (111, 2, 'NO');
+
+
+-- Problem 112
+INSERT INTO output (probid, testcaseno, output)
+VALUES
+  (112, 1, '[0,8,5,9,7]'),
+  (112, 1, '[0, 8, 5, 9, 7]');
+
+-- 9. Discussions
+
+INSERT INTO discussions (discid, topic, started_by)
+VALUES
+  (201, 'Discussion on Sum of Two Numbers', 1),
+  (202, 'Reversing Strings: Tips & Tricks', 7),
+  (203, 'Graph Path Problem - Clarifications', 9),
+  (204, 'Sorting Algorithms Comparison', 11),
+  (205, 'Matrix Multiplication Q&A', 3),
+  (207, 'General Coding Challenges', 5);  -- Not linked to any problem
+
+
+-- 10. About (linking discussions to problems)
+
+INSERT INTO about (discid, probid)
+VALUES
+  (201, 101),
+  (202, 102),
+  (203, 103),
+  (204, 104),
+  (205, 105),
+  (205, 106),
+  (205, 107);
+
+
+-- 11. Posts (multiple posts, some users post more than once)
+
+INSERT INTO posts (postid, comment, posted_at, userid, discid)
+VALUES
+  (301, 'This problem was very straightforward.', timestamp '2024-12-24 19:34:18', 2, 201),
+  (302, 'I had issues with edge cases.', timestamp '2025-04-03 19:05:00', 3, 203),
+  (303, 'Great contest overall!', timestamp '2025-04-04 20:00:00', 5, 202),
+  (304, 'Can someone explain the algorithm used?', timestamp '2025-02-10 20:15:00', 7, 203),
+  (305, 'I found an alternative sorting approach.', timestamp '2025-03-06 21:00:22', 11, 204),
+  (306, 'Matrix multiplication was challenging.', timestamp '2025-04-07 21:05:00', 12, 205),
+  (307, 'Loving the new contest format!', timestamp '2025-04-08 21:10:00', 8, 207),
+  (308, 'I do not usually post, but this contest rocks!', timestamp '2025-03-10 21:15:00', 10, 207),
+  (309, 'Anyone solved problem 112 yet?', timestamp '2025-04-10 21:20:00', 4, 207),
+  (310, 'Really enjoyed solving problem 101; it was very inspiring!', timestamp '2025-03-25 21:25:00', 3, 201),
+  (311, 'Found a bug in the submission grader. Please check the error logs.', timestamp '2025-02-28 21:30:00', 4, 202),
+  (312, 'Can we have a revision for the test cases in discussion?', timestamp '2025-02-19 21:35:00', 11, 207),
+  (313, 'Looking forward to more challenges like these!', timestamp '2025-05-20 21:40:00', 8, 207);
+
+-- 12. participates_in (contest participation)
+
+-- Contest 1 (Spring Challenge): 10 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (1, 1, 1, 100, 2),
+  (2, 1, 2, 95, 2),
+  (3, 1, 3, 90, 2),
+  (4, 1, 4, 85, 2),
+  (7, 1, 5, 80, 2),
+  (8, 1, 6, 75, 2),
+  (9, 1, 7, 70, 2),
+  (10, 1, 8, 65, 2),
+  (11, 1, 9, 60, 2),
+  (12, 1, 10, 55, 2);
+
+-- Contest 2 (Autumn Cup): 3 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (5, 2, 1, 88, 1),
+  (6, 2, 2, 82, 1),
+  (7, 2, 3, 75, 1);
+
+-- Contest 3 (Winter Bash): 2 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (8, 3, 1, 92, 2),
+  (9, 3, 2, 85, 2);
+
+-- Contest 4 (Summer Showdown): 2 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (10, 4, 1, 90, 2),
+  (11, 4, 2, 80, 2);
+
+-- Contest 5 (New Year Sprint): 3 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (1, 5, 1, 99, 2),
+  (2, 5, 2, 95, 2),
+  (3, 5, 3, 90, 2);
+
+-- Contest 6 (Tech Fiesta): 4 participants
+INSERT INTO participates_in (userid, contestid, rank, score, time_spent_hrs)
+VALUES
+  (4, 6, 1, 93, 2),
+  (5, 6, 2, 88, 2),
+  (6, 6, 3, 82, 2),
+  (12, 6, 4, 80, 2);
+
+
+-- 13. written_by (multiple users can design a contest)
+
+INSERT INTO written_by (userid, contestid)
+VALUES
+  (5, 1),
+  (6, 1),          -- Contest 1: 2 designers
+  (3, 2),
+  (4, 2),
+  (8, 2),          -- Contest 2: 3 designers
+  (1, 3),
+  (10, 3),         -- Contest 3: 2 designers
+  (12, 4),
+  (2, 4),          -- Contest 4: 2 designers
+  (4, 5),          -- Contest 5: 1 designer
+  (3, 6),
+  (9, 6);          -- Contest 6: 2 designers
+
+-- 14. Submissions (with complete code snippets and varied submission_time dates)
+
+INSERT INTO submissions (subid, code, status, memory_mb, runtime_s, language, submission_time, userid, probid, wrong_testcaseno)
+VALUES
+  (401, $$#include <iostream>\nint main(){ int a, b; std::cin >> a >> b; std::cout << a+b; return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-02-03 18:30:52', 1, 101, NULL),
+  (402, $$public class Solution { public static void main(String[] args){ System.out.println(new StringBuilder(\"hello\").reverse().toString()); } }$$, 'Wrong_Answer', 256, 2, 'Java', timestamp '2024-12-28 09:15:30', 2, 102, 2),
+  (403, $$#include <iostream>\n// Code that times out\nint main(){ while(true); return 0; }$$, 'TLE', 128, 3, 'C++', timestamp '2025-04-05 10:20:00', 3, 103, NULL),
+  (404, $$#include <iostream>\nint main(){ int x; std::cin >> x; std::cout << (x % 2 == 0 ? \"Even\" : \"Odd\"); return 0; }$$, 'Wrong_Answer', 256, 1, 'C++', timestamp '2025-04-06 14:05:15', 4, 103, 1),
+  (405, $$#include <algorithm>\n#include <vector>\nint main(){ std::vector<int> arr = {5,3,8,1}; std::sort(arr.begin(), arr.end()); return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-02-12 16:10:45', 5, 104, NULL),
+  (406, $$#include <iostream>\nusing namespace std; int main(){ int arr[2][2] = {{2,0},{1,3}}; /* Multiply matrices */ return 0; }$$, 'MLE', 1024, 5, 'C++', timestamp '2025-04-08 11:25:30', 6, 105, NULL),
+  (407, $$#include <bits/stdc++.h>\nusing namespace std; int main(){ cout << \"Hello, World!\"; return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-04-09 12:05:50', 7, 101, NULL),
+  (408, $$def solve():\n    s = input()\n    print(s[::-1])\nsolve()$$, 'Accepted', 128, 1, 'Python', timestamp '2025-01-10 13:15:25', 8, 102, NULL),
+  (409, $$#include <iostream>\nint main(){ std::cout << \"Yes\"; return 0; }$$, 'Wrong_Answer', 128, 1, 'C++', timestamp '2025-04-11 08:55:10', 9, 103, 1),
+  (410, $$#include <iostream>\nusing namespace std;\nint main(){ int arr[] = {5,3,8,1}; sort(arr, arr+4); for(int i=0;i<4;i++) cout << arr[i] << \" \"; return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-04-12 09:45:00', 10, 104, NULL),
+  -- Two submissions with Compile_Error from user 2
+  (411, $$public class Test { public static void main(String[] args){ System.out.println(\"Test\");$$, 'Compile_Error', 256, 2, 'Java', timestamp '2025-01-13 11:40:32', 2, 102, NULL),
+  (412, $$public class Error { public static void main(String[] args){ System.out.println(\"Error\"); }$$, 'Compile_Error', 256, 2, 'Java', timestamp '2025-01-14 00:15:30', 2, 102, NULL),
+  (413, $$#include <iostream>\nint main(){ std::cout << \"No\"; return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-04-15 12:25:50', 11, 103, NULL),
+  -- Submissions for new problems:
+  (414, $$#include <iostream>\nint binarySearch(int arr[], int n, int key){ int lo=0, hi=n-1; while(lo<=hi){ int mid = lo + (hi-lo)/2; if(arr[mid]==key)return mid; else if(arr[mid] < key) lo = mid+1; else hi = mid-1; } return -1; }\nint main(){ int arr[5] = {1,3,5,7,9}; std::cout << binarySearch(arr,5,5); return 0; }$$, 'Accepted', 128, 2, 'C++', timestamp '2025-05-01 14:45:00', 4, 106, NULL),
+  (415, $$#include <iostream>\nusing namespace std; int main(){ int n; cin >> n; long long fact=1; for(int i=2;i<=n;i++) fact*=i; cout << fact; return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-05-02 15:30:00', 5, 107, NULL),
+  (416, $$#include <iostream>\nint main(){ int n; std::cin >> n; if(n<2) std::cout << \"Yes\"; else {bool flag=true; for(int i=2;i<n;i++) if(n%i==0){ flag=false; break; } std::cout << (flag ? \"Yes\" : \"No\"); } return 0; }$$, 'Accepted', 128, 1, 'C++', timestamp '2025-05-03 16:20:00', 6, 108, NULL),
+  (417, $$#include <iostream>\n#include <vector>\nusing namespace std; void merge(vector<int>& arr, int l, int m, int r){ vector<int> left(arr.begin()+l, arr.begin()+m+1), right(arr.begin()+m+1, arr.begin()+r+1); int i=0,j=0,k=l; while(i<left.size() && j<right.size()){ if(left[i]<=right[j]) arr[k++]=left[i++]; else arr[k++]=right[j++]; } while(i<left.size()) arr[k++]=left[i++]; while(j<right.size()) arr[k++]=right[j++]; } void mergeSort(vector<int>& arr, int l, int r){ if(l<r){ int m = l+(r-l)/2; mergeSort(arr,l,m); mergeSort(arr,m+1,r); merge(arr,l,m,r); } } int main(){ vector<int> arr = {8,3,5,2}; mergeSort(arr,0,arr.size()-1); for(auto e : arr) cout << e << \" \"; return 0; }$$, 'Accepted', 128, 2, 'C++', timestamp '2025-05-04 17:10:00', 7, 109, NULL),
+  (418, $$#include <iostream>\n#include <string>\nusing namespace std;\nint lcs(string s1, string s2){ int m = s1.size(), n = s2.size(); int dp[m+1][n+1] = {0}; for(int i=1;i<=m;i++) for(int j=1;j<=n;j++) dp[i][j] = (s1[i-1]==s2[j-1]) ? dp[i-1][j-1]+1 : max(dp[i-1][j], dp[i][j-1]); return dp[m][n]; }\nint main(){ string a=\"ABCBDAB\", b=\"BDCAB\"; cout << lcs(a,b); return 0; }$$, 'Accepted', 128, 2, 'C++', timestamp '2025-05-05 18:05:00', 8, 110, NULL),
+  (419, $$#include <iostream>\nusing namespace std; int main(){ cout << \"Test incomplete code\"; return 0; }$$, 'Wrong_Answer', 128, 1, 'C++', timestamp '2025-05-06 19:00:00', 9, 111, NULL),
+  (420, $$#include <iostream>\n// Incorrect Dijkstra implementation\nint main(){ std::cout << \"-1\"; return 0; }$$, 'Wrong_Answer', 512, 3, 'C++', timestamp '2025-05-07 20:00:00', 12, 112, NULL),
+  (421, $$#include <iostream>\n#include <vector>\n#include <queue>\nusing namespace std;\nint main(){ int V; cin >> V; vector<vector<pair<int,int>>> graph(V); int E; cin >> E; for(int i=0;i<E;i++){ int u,v,w; cin >> u >> v >> w; graph[u].push_back({v,w}); } int src; cin >> src; vector<int> dist(V, 1e9); dist[src]=0; priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq; pq.push({0,src}); while(!pq.empty()){ auto [d,u] = pq.top(); pq.pop(); if(d>dist[u]) continue; for(auto &edge : graph[u]){ int v = edge.first, w = edge.second; if(dist[u]+w < dist[v]){ dist[v] = dist[u]+w; pq.push({dist[v],v}); } } } cout << \"[\"; for(int i=0;i<V;i++){ cout << dist[i] << (i!=V-1 ? \", \" : \"]\"); } return 0; }$$, 'Accepted', 512, 3, 'C++', timestamp '2025-05-08 21:00:00', 12, 112, NULL);
+
+-- 15. Solutions (samples solution which are submitted by a user an then approved by admin)
+
+INSERT INTO solution (solutionid, code, sol_memory_mb, sol_runtime_s, language, userid, probid)
+VALUES
+  (501, $$#include <iostream>\nint main(){ int a, b; std::cin >> a >> b; std::cout << a+b; return 0; }$$, 128, 1, 'C++', 1, 101),
+  (502, $$def reverse_str(s):\n    return s[::-1]\nprint(reverse_str(input()))$$, 128, 1, 'Python', 2, 102),
+  (503, $$#include <queue>\n#include <vector>\nusing namespace std;\nbool isPath(int n, vector<vector<int>>& adj, int s, int t){ vector<bool> vis(n,false); queue<int> q; q.push(s); vis[s]=true; while(!q.empty()){ int cur=q.front(); q.pop(); if(cur==t)return true; for(auto x: adj[cur]) if(!vis[x]){ vis[x]=true; q.push(x); } } return false; }\nint main(){ int n, s, t; cin >> n >> s >> t; vector<vector<int>> adj(n); /* fill adj */ return 0; }$$, 512, 2, 'C++', 3, 103),
+  (504, $$#include <iostream>\n#include <string>\nusing namespace std;\nint lcs(string s1, string s2){ int m = s1.size(), n = s2.size(); vector<vector<int>> dp(m+1, vector<int>(n+1,0)); for(int i=1;i<=m;i++){ for(int j=1;j<=n;j++){ dp[i][j] = (s1[i-1]==s2[j-1]) ? dp[i-1][j-1]+1 : max(dp[i-1][j], dp[i][j-1]); } } return dp[m][n]; }\nint main(){ string a=\"ABCBDAB\", b=\"BDCAB\"; cout << lcs(a,b); return 0; }$$, 256, 2, 'C++', 8, 110),
+  (505, $$#include <iostream>\nusing namespace std; int main(){ int V; cin >> V; vector<vector<pair<int,int>>> graph(V); int E; cin >> E; for(int i=0;i<E;i++){ int u,v,w; cin >> u >> v >> w; graph[u].push_back({v,w}); } int src; cin >> src; vector<int> dist(V, 1e9); dist[src]=0; priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq; pq.push({0,src}); while(!pq.empty()) { auto [d,u] = pq.top(); pq.pop(); if(dist[u]!=d){ continue; } for(auto &edge : graph[u]){ int v = edge.first, w = edge.second; if(dist[u] + w < dist[v]){ dist[v] = dist[u] + w; pq.push({dist[v], v}); } } } cout << \"[\"; for(int i=0;i<V;i++){ cout << dist[i] << (i<V-1 ? \", \" : \"]\"); } return 0; }$$, 512, 3, 'C++', 12, 112);
