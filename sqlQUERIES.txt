@@ -1,0 +1,361 @@
+List of all query statements in SQL :
+
+1. List and details of all platform users in descending order of rating:
+-> SELECT userid, name, rating, email, phone_no, reg_date, country
+FROM users
+ORDER BY rating DESC;
+
+2. List of winners (participants with rank-1) for all contests:
+->  SELECT 
+    c.contest_name,
+    c.contest_div AS division,
+    u.name AS winner_name,
+    u.email,
+    pi.score,
+    pi.time_spent_hrs
+FROM contests c
+JOIN participates_in pi ON c.contestid = pi.contestid
+JOIN users u ON pi.userid = u.userid
+WHERE pi.rank = 1
+ORDER BY c.contest_date_time DESC;
+
+3. LEADERBOARD DISPLAY for any given contest (say contestid = 1):
+-> SELECT 
+    u.userid,
+    u.name,
+    u.rating,
+    pi.rank,
+    pi.score,
+    pi.time_spent_hrs,
+    c.contest_name
+FROM users u
+JOIN participates_in pi ON u.userid = pi.userid
+JOIN contests c ON pi.contestid = c.contestid
+WHERE pi.contestid = 1 -- Replace 1 with your desired contestid
+ORDER BY pi.rank ASC;
+
+4. List of all problems with their status of submissions:
+-> SELECT 
+    p.probid,
+    p.prob_name,
+    s.subid,
+    s.status,
+    s.wrong_testcaseno AS rejected_testcase,
+    u.name AS submitter_name,
+    s.submission_time
+FROM problems p
+LEFT JOIN submissions s ON p.probid = s.probid
+LEFT JOIN users u ON s.userid = u.userid
+ORDER BY p.probid ASC, s.subid ASC;
+
+5. Average Rating of users per country;
+-> SELECT country, AVG(rating) AS avg_rating, COUNT(*) AS total_users
+FROM users
+GROUP BY country;
+
+6. User submission summary (List of all submissions for user with statuses):
+-> SELECT 
+	u.userid,
+	u.name,
+    COUNT(s.subid) AS total_submissions, 
+    SUM(CASE WHEN s.status = 'Accepted' THEN 1 ELSE 0 END) AS accepted_submissions
+FROM 
+    users u
+LEFT JOIN 
+    submissions s ON u.userid = s.userid
+GROUP BY 
+    u.userid
+ORDER BY 
+    accepted_submissions DESC;
+
+7. Most commonly favorited problems:
+-> SELECT 
+    p.probid, 
+    p.prob_name, 
+    COUNT(f.userid) AS favorite_count,
+    STRING_AGG(u.name, ', ') AS favorited_by
+FROM 
+    problems p
+LEFT JOIN 
+    favorites f ON p.probid = f.probid
+LEFT JOIN 
+    users u ON f.userid = u.userid
+GROUP BY 
+    p.probid, p.prob_name
+ORDER BY 
+    favorite_count DESC, p.prob_name
+LIMIT 5;
+
+8. Common problems solved by any 2 friends:
+-> SELECT 
+    u1.name AS user_name, 
+    u2.name AS friend_name, 
+    p.prob_name AS common_problem
+FROM 
+    friend_of f
+JOIN 
+    users u1 ON f.userid = u1.userid
+JOIN 
+    users u2 ON f.friendid = u2.userid
+JOIN 
+    submissions s1 ON u1.userid = s1.userid AND s1.status = 'Accepted'
+JOIN 
+    submissions s2 ON u2.userid = s2.userid AND s2.probid = s1.probid AND s2.status = 'Accepted'
+JOIN 
+    problems p ON s1.probid = p.probid
+ORDER BY 
+    u1.name, u2.name, p.prob_name;
+
+9. Most active discussion pages (Discussions with the highest number of posts):
+-> SELECT 
+    d.discid, 
+    d.topic, 
+    u.name AS started_by, 
+    COUNT(p.postid) AS post_count
+FROM 
+    discussions d
+JOIN 
+    users u ON d.started_by = u.userid
+LEFT JOIN 
+    posts p ON d.discid = p.discid
+GROUP BY 
+    d.discid, d.topic, u.name
+ORDER BY 
+    post_count DESC, d.topic;
+
+10. Problems-Discussions-Posts Count:
+-> SELECT 
+    p.prob_name, 
+    d.topic, 
+    COUNT(p2.postid) AS post_count
+FROM 
+    discussions d
+JOIN 
+    about a ON d.discid = a.discid
+JOIN 
+    problems p ON a.probid = p.probid
+LEFT JOIN 
+    posts p2 ON d.discid = p2.discid
+GROUP BY 
+    p.prob_name, d.topic
+ORDER BY 
+    post_count DESC, p.prob_name;
+
+11. List of users playing the role of contributor, i.e., those who have contributed questions:
+-> SELECT DISTINCT 
+    p.probid,
+    p.prob_name,
+    u.name AS user_name,
+    s.status
+FROM problems p
+JOIN submissions s ON p.probid = s.probid
+JOIN users u ON s.userid = u.userid
+WHERE s.userid = 2
+  AND p.probid NOT IN (
+    SELECT probid 
+    FROM submissions 
+    WHERE userid = 2 
+    AND status = 'Accepted'
+  )
+ORDER BY p.probid ASC;
+
+
+12. List of problems filtered by difficulty range and tag name:
+-> SELECT DISTINCT 
+    p.probid,
+    p.prob_name,
+    p.difficulty,
+    t.tagname
+FROM problems p
+JOIN tags t ON p.probid = t.probid
+WHERE p.difficulty BETWEEN 1200 AND 1500
+  AND t.tagname = 'string'
+ORDER BY p.difficulty ASC, p.probid ASC;
+
+13. Profile of all users including number of problems solved, contests participated, friends, favorite problems along with avg runtime and memory of submissions and most frequently used programming language:
+-> SELECT 
+    u.userid,
+    u.name,
+    u.email,
+    u.phone_no,
+    u.rating,
+    u.reg_date,
+    u.country,
+
+    solved.count_solved AS problems_solved,
+    contests.count_contests AS contests_participated,
+    friends.count_friends AS number_of_friends,
+    favs.count_favorites AS favorite_problems,
+    avg_stats.avg_runtime AS avg_runtime_s,
+    avg_stats.avg_memory AS avg_memory_mb,
+    lang_stats.most_used_language
+
+FROM CodingPlatform.users u
+
+-- Problems Solved
+LEFT JOIN (
+    SELECT userid, COUNT(DISTINCT probid) AS count_solved
+    FROM CodingPlatform.submissions
+    WHERE status = 'Accepted'
+    GROUP BY userid
+) solved ON u.userid = solved.userid
+
+-- Contests Participated
+LEFT JOIN (
+    SELECT userid, COUNT(*) AS count_contests
+    FROM CodingPlatform.participates_in
+    GROUP BY userid
+) contests ON u.userid = contests.userid
+
+-- Friends Count
+LEFT JOIN (
+    SELECT userid, COUNT(*) AS count_friends
+    FROM CodingPlatform.friend_of
+    GROUP BY userid
+) friends ON u.userid = friends.userid
+
+-- Favorite Problems
+LEFT JOIN (
+    SELECT userid, COUNT(*) AS count_favorites
+    FROM CodingPlatform.favorites
+    GROUP BY userid
+) favs ON u.userid = favs.userid
+
+-- Average Runtime and Memory
+LEFT JOIN (
+    SELECT userid, 
+           AVG(runtime_s) AS avg_runtime, 
+           AVG(memory_mb) AS avg_memory
+    FROM CodingPlatform.submissions
+    GROUP BY userid
+) avg_stats ON u.userid = avg_stats.userid
+
+-- Most Frequently Used Language
+LEFT JOIN (
+    SELECT userid, language AS most_used_language
+    FROM (
+        SELECT userid, language,
+               RANK() OVER (PARTITION BY userid ORDER BY COUNT(*) DESC) AS lang_rank
+        FROM CodingPlatform.submissions
+        GROUP BY userid, language
+    ) ranked_langs
+    WHERE lang_rank = 1
+) lang_stats ON u.userid = lang_stats.userid;
+
+14. List of all testcases and their outputs for any given problem
+-> SELECT 
+    tc.testcaseno,
+    tc.input,
+    o.output
+FROM CodingPlatform.test_cases tc
+JOIN CodingPlatform.output o
+  ON tc.probid = o.probid AND tc.testcaseno = o.testcaseno
+WHERE tc.probid = 103
+ORDER BY tc.testcaseno;
+
+15. Contest Problem User Improvement tracking Query - List of users and the details of the problems they failed to solve in a contest and later tried to upsolve them successfully
+-> SELECT 
+    u.name AS user_name,
+    c.contest_name,
+    p.prob_name AS problem_name,
+    s1.submission_time AS contest_submission_time,
+    s1.status AS contest_submission_status,
+    s2.submission_time AS later_submission_time,
+    s2.status AS later_submission_status,
+    s2.runtime_s - s1.runtime_s AS runtime_improvement_seconds,
+    s2.memory_mb - s1.memory_mb AS memory_improvement_mb
+FROM 
+    users u
+JOIN 
+    participates_in pi ON u.userid = pi.userid
+JOIN 
+    contests c ON pi.contestid = c.contestid
+JOIN 
+    problems p ON p.contestid = c.contestid
+JOIN 
+    submissions s1 ON s1.userid = u.userid AND s1.probid = p.probid
+JOIN 
+    submissions s2 ON s2.userid = u.userid AND s2.probid = p.probid
+WHERE 
+    -- Filter for failed contest submissions
+    s1.status = 'Rejected'
+    -- Ensure the later submission happened after the contest
+    AND s2.submission_time > (c.contest_date_time + (c.duration_hrs * INTERVAL '1 hour'))
+    -- Optional: Filter for a specific user (replace 123 with the user's ID)
+    AND u.userid = 123
+    -- Optional: Filter for a specific contest (replace 456 with the contest ID)
+    AND c.contestid = 456
+    -- Ensure s2 is a later submission than s1
+    AND s2.submission_time > s1.submission_time
+ORDER BY 
+    c.contest_date_time DESC, 
+    p.prob_name, 
+    s1.submission_time, 
+    s2.submission_time;
+
+16. Most efficient submission (lowest runtime) for each problem
+-> SELECT 
+    s.subid,
+    p.prob_name,
+    u.name AS submitter_name,
+    s.runtime_s,
+    s.status,
+    s.submission_time
+FROM submissions s
+JOIN users u ON s.userid = u.userid
+JOIN problems p ON s.probid = p.probid
+WHERE s.status = 'Accepted'
+  AND s.runtime_s = (SELECT MIN(runtime_s) FROM submissions WHERE status = 'Accepted')
+ORDER BY s.subid ASC;
+
+17. List of all problems that a particular user has attempted but not solved correctly
+-> SELECT DISTINCT 
+    p.probid,
+    p.prob_name,
+    u.name AS user_name,
+    s.status
+FROM problems p
+JOIN submissions s ON p.probid = s.probid
+JOIN users u ON s.userid = u.userid
+WHERE s.userid = 2
+  AND p.probid NOT IN (
+    SELECT probid 
+    FROM submissions 
+    WHERE userid = 2 
+    AND status = 'Accepted'
+  )
+ORDER BY p.probid ASC;
+
+18. Users who have designed contests along with the participant count and names
+-> SELECT 
+    c.contestid,
+    c.contest_name,
+    u1.name AS creator_name,
+    STRING_AGG(u2.name, ', ') AS participant_names,
+    COUNT(pi.userid) AS participant_count
+FROM contests c
+LEFT JOIN problems p ON c.contestid = p.contestid
+LEFT JOIN users u1 ON p.creator_id = u1.userid
+LEFT JOIN participates_in pi ON c.contestid = pi.contestid
+LEFT JOIN users u2 ON pi.userid = u2.userid
+GROUP BY c.contestid, c.contest_name, u1.name
+ORDER BY c.contestid ASC;
+
+19. Problems which don't have any solution provided yet
+-> SELECT p.probid, p.prob_name
+FROM CodingPlatform.problems p
+LEFT JOIN CodingPlatform.solution s
+  ON p.probid = s.probid
+WHERE s.probid IS NULL;
+
+20. Discussion Page Display (List of all posts in a discussion):
+-> SELECT postid, comment, posted_at, userid
+FROM CodingPlatform.posts
+WHERE discid = 101;
+
+
+
+
+
+
+
